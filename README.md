@@ -35,17 +35,17 @@ import { ethers } from 'ethers'
 import EthBlockDatetime from 'eth-block-datetime'
 
 const provider = new ethers.providers.CloudflareProvider()
-const ethDatetime = new EthBlockDatetime({
+const ethDatetime = new EthBlockDatetime(
     provider, // [required] rpc provider
-})
+)
 ```
 With block explorer for more efficient queries
 ```javascript 
-const ethDatetime = new EthBlockDatetime({
+const ethDatetime = new EthBlockDatetime(
     provider, // [required] rpc provider
     1, // [optional / required if using blockExplorer client] chainId
     'FREE_ETHERSCAN_APIKEY', // [optional] free or pro etherscan api key corresponding to specified chainId
-})
+)
 ```
 
 ## Usage
