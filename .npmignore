@@ -1,0 +1,24 @@
+*.log
+npm-debug.log*
+
+# Dependency directories
+node_modules
+
+# configs
+package-lock.json
+yarn.lock
+config.json
+yarn-error.log
+.yarnrc
+.env
+tsconfig.json
+
+# project files
+src
+test
+.babelrc
+.babel.config.json
+.gitignore
+.eslintrc.json
+.prettierrc
+.prettierignore
