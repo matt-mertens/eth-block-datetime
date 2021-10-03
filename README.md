@@ -1,5 +1,6 @@
 <h1 align="center">Welcome to eth-block-datetime 👋</h1>
 <p>
+  <img alt="Version" src="https://img.shields.io/npm/v/eth-block-datetime" />
   <img alt="Version" src="https://img.shields.io/badge/version-1.0.0-blue.svg?cacheSeconds=2592000" />
   <a href="https://github.com/matmertz25/eth-block-datetime#readme" target="_blank">
     <img alt="Documentation" src="https://img.shields.io/badge/documentation-yes-brightgreen.svg" />
