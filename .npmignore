@@ -12,12 +12,14 @@ yarn-error.log
 .yarnrc
 .env
 tsconfig.json
+babel.config.json
+jest.config.ts
 
 # project files
 src
 test
+coverage
 .babelrc
-.babel.config.json
 .gitignore
 .eslintrc.json
 .prettierrc
