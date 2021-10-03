@@ -7,7 +7,7 @@
   <a href="https://github.com/matmertz25/eth-block-datetime/graphs/commit-activity" target="_blank">
     <img alt="Maintenance" src="https://img.shields.io/badge/Maintained%3F-yes-green.svg" />
   </a>
-  <a href="https://github.com/matmertz25/eth-block-datetime/blob/master/LICENSE" target="_blank">
+  <a href="https://github.com/matmertz25/eth-block-datetime/blob/main/LICENSE" target="_blank">
     <img alt="License: MIT" src="https://img.shields.io/github/license/matmertz25/eth-block-datetime" />
   </a>
 </p>
