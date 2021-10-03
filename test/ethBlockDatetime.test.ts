@@ -10,7 +10,7 @@ const web3Provider = new Web3(new Web3.providers.HttpProvider(process.env.ETH_RP
 describe('Eth Block Datetime Tests', function() {
     let ethBlockDatetime: any
     beforeEach(async function() {
-        ethBlockDatetime = new EthBlockDatetime(ethersProvider, 1) //, process.env.ETHERSCAN_API_KEY)  
+        ethBlockDatetime = new EthBlockDatetime(web3Provider, 1) //, process.env.ETHERSCAN_API_KEY)  
     })
 
     describe('getBlockByTimestamp()', function() {
@@ -39,15 +39,12 @@ describe('Eth Block Datetime Tests', function() {
             expect(block.number).toBe(latestBlock)
         })
 
-        test('throws error if given time is in the future', async function() {
+        test('gives latest block if given time is in the future', async function() {
             const latestBlock = await ethBlockDatetime.provider.eth.getBlockNumber()
-            try {
-                await ethBlockDatetime.getBlockByTimestamp({
-                    timestamp: moment().add(100, 'years').utc(),
-                })
-            } catch (e) {
-                expect(e.message).toEqual(`Timestamp is after the latest block ${latestBlock}`)
-            }
+            const block = await ethBlockDatetime.getBlockByTimestamp({
+                timestamp: moment().add(100, 'years').utc(),
+            })
+            expect(block.number).toBe(latestBlock)
         })
 
         test('get correct block for a given string', async () => {
@@ -59,7 +56,7 @@ describe('Eth Block Datetime Tests', function() {
 
         test('get previous block for a given string', async function() {
             const block = await ethBlockDatetime.getBlockByTimestamp({
-                timestamp: '2016-07-20T13:20:40Z',
+                timestamp: '2016-07-20T13:20:38Z',
                 current: 'before',
             })
             expect(block.number).toBe(1919999)
@@ -115,23 +112,26 @@ describe('Eth Block Datetime Tests', function() {
             expect(blockNumbers).toEqual(expected)
         })
 
-        test('returns correct blocks for range', async function() {
-            const startTime = moment().subtract(6, 'months').utc()
+        test('get first blocks of week', async function() {
+            let startTime = new Date()
+            startTime = new Date(startTime.setDate(startTime.getDate() - 7))
             const blocks = await ethBlockDatetime.getBlocksByRange({
                 start: startTime,
-                end: 'latest',
+                interval: 'days',
+                duration: 1,
+                closest: 'before'
+            })
+            expect(blocks.length).toBe(8)
+        })
+
+        test('returns correct blocks for range', async function() {
+            const startTime = moment().subtract(6, 'months')
+            const blocks = await ethBlockDatetime.getBlocksByRange({
+                start: startTime,
                 interval: 'months',
                 duration: 1,
             })
-            expect(blocks.length).toBe(6)
-            console.log(blocks.sort((a, b) => a.timestamp - b.timestamp))
-            blocks.sort((a, b) => a.timestamp - b.timestamp).forEach((block, idx) => {
-                if (idx === 0) {
-                    expect(startTime.unix()).toEqual(block.timestamp)
-                } else {
-                    expect(startTime.add(idx, 'months').unix()).toEqual(block.timestamp)
-                }
-            })
+            expect(blocks.length).toBe(7)
         })
     })
 })

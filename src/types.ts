@@ -1,5 +1,5 @@
 // "latest" - The most recently mined block
-// "earliest" - Block #0
+// "earliest" - Block #1
 export enum BlockTag {
     Latest = 'latest',
     Earliest = 'earliest',

@@ -1,11 +1,7 @@
 import axios, { AxiosInstance } from 'axios'
 
-export const baseApiClient = (baseUrl: string, accessToken?: string): AxiosInstance => {
-  const headers: any = {}
-  if (accessToken) {
-    headers['Authorization'] = `Bearer ${accessToken}`
-  }
-
+export const baseApiClient = (baseUrl: string, headerParams?: { [key: string]: any }): AxiosInstance => {
+  const headers: any = { ...headerParams }
   return axios.create({
     baseURL: baseUrl,
     headers,

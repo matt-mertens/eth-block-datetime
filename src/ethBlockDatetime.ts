@@ -4,7 +4,7 @@ import { EtherscanApi } from './services/etherscan'
 import { ChainId, PUBLIC_BLOCKEXPLORER_API_MAPPING } from './const'
 
 export default class {
-    readonly chainId: ChainId
+    readonly chainId?: ChainId
     private checkedBlocks
     readonly blocks: { [key: number]: Block }
     provider: { eth: any }
@@ -13,11 +13,11 @@ export default class {
     latestBlock?: Block
     averageBlockTimeSinceGenesis?: number
 
-    constructor(rpcProvider, chainId, blockExplorerApiKey?: string) {
+    constructor(rpcProvider, chainId?: number, blockExplorerApiKey?: string) {
         this.provider = rpcProvider.constructor.name === 'Web3' ? rpcProvider : { eth: rpcProvider }
         this.chainId = chainId
-        this.blockExplorerClient = blockExplorerApiKey ? new EtherscanApi({
-            blockExplorerUrl: PUBLIC_BLOCKEXPLORER_API_MAPPING[this.chainId],
+        this.blockExplorerClient = blockExplorerApiKey && chainId ? new EtherscanApi({
+            blockExplorerUrl: PUBLIC_BLOCKEXPLORER_API_MAPPING[chainId],
             apiKey: blockExplorerApiKey
         }) : undefined
         this.blocks = {}
@@ -29,7 +29,7 @@ export default class {
         if (blockTag == 'latest') {
             blockNumber = await this.provider.eth.getBlockNumber()
         } else {
-            blockNumber = blockTag == 'earliest' ? 0 : blockTag
+            blockNumber = blockTag == 'earliest' ? 1 : blockTag
         }
 
         if (this.blocks[blockNumber]) return this.blocks[blockNumber]
@@ -123,7 +123,7 @@ export default class {
         // if timestamp is 'latest' or  'earliest' return the block directly
         if (Object.values(BlockTag).includes(timestamp)) {
             const block = await this.getBlock(timestamp)
-            return this.getFormattedBlockDatetime(moment(block.timestamp).utc().format(), block, includeFullBlock)
+            return this.getFormattedBlockDatetime(moment.unix(block.timestamp).utc().format(), block, includeFullBlock)
         }
         // if timestamp is a number convert to moment date object
         if (!moment.isMoment(timestamp)) timestamp = moment(timestamp).utc()
@@ -140,10 +140,12 @@ export default class {
 
         // if blockExplorerClient is not defined use the provider to get block number by timestamp
         const { earliestBlock, latestBlock, averageBlockTimeSinceGenesis } = await this.getBlockchainBoundaries()
-        if (timestamp.isBefore(moment.unix(earliestBlock.timestamp))) 
-            throw new Error(`Timestamp is before the earliest block`)
-        if (timestamp.isSameOrAfter(moment.unix(latestBlock.timestamp))) 
-            throw new Error(`Timestamp is after the latest block ${latestBlock?.number}`)
+        if (timestamp.isBefore(moment.unix(earliestBlock.timestamp))) throw new Error(`Timestamp is before the earliest block`)
+        if (timestamp.isAfter(moment.unix(latestBlock.timestamp))) return this.getFormattedBlockDatetime(
+            timestamp.format(),
+            latestBlock,
+            includeFullBlock,
+        )
 
         this.checkedBlocks[timestamp.unix()] = []
         // if blockExplorerClient is not defined and timestamp is between earliest and latest block predict the block number
@@ -160,7 +162,7 @@ export default class {
 
     async getBlocksByRange({
         start,
-        end = moment().subtract(1, 'minutes').utc(),
+        end = new Date(),
         interval,
         duration = 1,
         closest = 'after',
@@ -174,8 +176,8 @@ export default class {
         includeFullBlock: boolean,
     }): Promise<BlockTimestamp[]> {
         let timestamps: number[] = []
-        if (!moment.isMoment(start)) start = moment(start).utc()
-        if (!moment.isMoment(end)) end = moment(end).utc()
+        if (!moment.isMoment(start)) start = moment(start)
+        if (!moment.isMoment(end)) end = moment(end)
         let current = start
         // build array of timestamps by interval and duration
         while (current.isSameOrBefore(end)) {
