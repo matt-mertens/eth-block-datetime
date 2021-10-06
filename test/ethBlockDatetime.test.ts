@@ -10,7 +10,7 @@ const web3Provider = new Web3(new Web3.providers.HttpProvider(process.env.ETH_RP
 describe('Eth Block Datetime Tests', function() {
     let ethBlockDatetime: any
     beforeEach(async function() {
-        ethBlockDatetime = new EthBlockDatetime(web3Provider, 1) //, process.env.ETHERSCAN_API_KEY)  
+        ethBlockDatetime = new EthBlockDatetime(ethersProvider, 1) //, process.env.ETHERSCAN_API_KEY)  
     })
 
     describe('getBlockByTimestamp()', function() {
@@ -18,7 +18,7 @@ describe('Eth Block Datetime Tests', function() {
             let block = await ethBlockDatetime.getBlockByTimestamp({
                 timestamp: 'earliest',
             })
-            expect(block.number).toBe(0)
+            expect(block.number).toBe(1)
         })
 
         test('throws error if given time is before first block time', async function() {
@@ -82,8 +82,10 @@ describe('Eth Block Datetime Tests', function() {
         })
 
         test('get full block data', async () => {
-            const block = await ethBlockDatetime.getBlockByTimestamp({ timestamp: 1469020840000 })
+            const block = await ethBlockDatetime.getBlockByTimestamp({ timestamp: 1469020840000, includeFullBlock: true })
             expect(block.number).toBe(1920000)
+            expect(block.hash.length).toBeGreaterThan(0)
+            expect(block.transactions.length).toBeGreaterThan(0)
         })
     })
 
@@ -132,6 +134,21 @@ describe('Eth Block Datetime Tests', function() {
                 duration: 1,
             })
             expect(blocks.length).toBe(7)
+        })
+
+        test('returns full blocks', async function() {
+            const startTime = moment().subtract(6, 'months')
+            const blocks = await ethBlockDatetime.getBlocksByRange({
+                start: startTime,
+                interval: 'months',
+                duration: 1,
+                includeFullBlock: true
+            })
+            expect(blocks.length).toBe(7)
+            blocks.forEach(block => {
+                expect(block.hash.length).toBeGreaterThan(0)
+                expect(block.transactions.length).toBeGreaterThan(0)
+            })
         })
     })
 })
