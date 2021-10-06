@@ -40,7 +40,8 @@ const ethDatetime = new EthBlockDatetime(
     provider, // [required] rpc provider
 )
 ```
-With block explorer for more efficient queries
+
+### With block explorer for more efficient queries
 ```javascript 
 const ethDatetime = new EthBlockDatetime(
     provider, // [required] rpc provider
@@ -48,6 +49,52 @@ const ethDatetime = new EthBlockDatetime(
     'FREE_ETHERSCAN_APIKEY', // [optional] free or pro etherscan api key corresponding to specified chainId
 )
 ```
+
+**Get block by timestamp**
+```javascript
+const latestBlock = await ethDatetime.getBlockByTimestamp({ timestamp: 'latest' })
+const earliestBlock = await ethDatetime.getBlockByTimestamp({ timestamp: 'earliest' })
+const blockFromDateString = await ethDatetime.getBlockByTimestamp({ timestamp: '2016-07-20T13:20:40Z' })
+const blockFromDateObject = await ethDatetime.getBlockByTimestamp({ timestamp: new Date('2016-07-20T13:20:40Z') })
+const blockDateFromMomentObject = await ethDatetime.getBlockByTimestamp({ timestamp: moment(new Date('2016-07-20T13:20:40Z')) })
+```
+
+Response
+```javascript
+{
+    datetime: '2021-10-03T16:09:28Z',
+    number: 13347220,
+    timestamp: 1633277292
+}
+```
+
+**Get blocks by range**
+```javascript
+let start = new Date()
+start = new Date(startTime.setDate(startTime.getDate() - 7))
+const block = await ethDatetime.getBlockByTimestamp({
+    start,
+    interval: 'days',
+})
+```
+
+Response
+```javascript
+[
+  {
+    datetime: '2021-09-26T16:09:28Z',
+    number: 13302379,
+    timestamp: 1632672551
+  },
+  {
+    datetime: '2021-09-27T16:09:28Z',
+    number: 13308801,
+    timestamp: 1632758964
+  },
+  // ... rest of blocks
+]
+```
+
 
 ## Usage
 
@@ -83,7 +130,7 @@ const provider = new Web3(new Web3.providers.HttpProvider(process.env.ETH_RPC_UR
 
 **Get block by timestamp**
 ```javascript
-const block = await ethBlockDatetime.getBlockByTimestamp({
+const block = await ethDatetime.getBlockByTimestamp({
     timestamp: 'earliest', // [required] options: earliest, latest, timestamp string, momentJs date object, or javascript date object
     closest: 'after', // [optional] after (default), before [estimation method for block closest to timestamp]
     blockTime: 15, // [optional] override average blocktime for finding closest block
@@ -105,7 +152,7 @@ Block
 let start = new Date()
 let end = new Date()
 start = new Date(startTime.setDate(startTime.getDate() - 7))
-const block = await ethBlockDatetime.getBlockByTimestamp({
+const block = await ethDatetime.getBlockByTimestamp({
     start, // [required] options: earliest, latest, timestamp string, momentJs date object, or javascript date object
     end, // [optional] latest block (default) options: earliest, latest, timestamp string, momentJs date object, or javascript date object
     interval: 'days', // [required] // seconds, minutes, hours, days, weeks, months, years
