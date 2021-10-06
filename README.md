@@ -72,7 +72,7 @@ Response
 ```javascript
 let start = new Date()
 start = new Date(startTime.setDate(startTime.getDate() - 7))
-const block = await ethDatetime.getBlockByTimestamp({
+const block = await ethDatetime.getBlocksByRange({
     start,
     interval: 'days',
 })
@@ -152,7 +152,7 @@ Block
 let start = new Date()
 let end = new Date()
 start = new Date(startTime.setDate(startTime.getDate() - 7))
-const block = await ethDatetime.getBlockByTimestamp({
+const block = await ethDatetime.getBlocksByRange({
     start, // [required] options: earliest, latest, timestamp string, momentJs date object, or javascript date object
     end, // [optional] latest block (default) options: earliest, latest, timestamp string, momentJs date object, or javascript date object
     interval: 'days', // [required] // seconds, minutes, hours, days, weeks, months, years
