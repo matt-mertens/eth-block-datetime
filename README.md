@@ -15,7 +15,7 @@
 
 > Utilities for parsing, validating, manipulating, and displaying Ethereum blocks by date
 
-### 🏠 [Homepage](https://github.com/matmertz25/eth-block-datetime#readme)
+### 🏠 [Homepage](https://github.com/matmertz25/eth-block-datetime#readme) | [Npm](https://www.npmjs.com/package/eth-block-datetime)
 
 ## Install
 
