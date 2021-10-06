@@ -1,6 +1,6 @@
 {
   "name": "eth-block-datetime",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Utilities for parsing, validating, manipulating, and displaying Ethereum blocks by date",
   "main": "./lib/index.ts",
   "scripts": {
