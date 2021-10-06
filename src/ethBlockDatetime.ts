@@ -131,9 +131,17 @@ export default class {
         if (this.blockExplorerClient && useBlockExplorer) {
             const { data } = await this.blockExplorerClient.getBlockNumberByTimestamp(timestamp.unix(), closest)
             const blockNumber = parseInt(data.result)
+            let block
+            if (data.result.includes('too far in the future')) {
+                const { latestBlock } = await this.getBlockchainBoundaries()
+                block = latestBlock
+            } else {
+                block = await this.getBlock(blockNumber)
+            }
+            
             return this.getFormattedBlockDatetime(
                 timestamp.format(),
-                await this.getBlock(blockNumber),
+                block,
                 includeFullBlock
             )
         }
